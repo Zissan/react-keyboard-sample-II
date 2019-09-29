@@ -4,20 +4,18 @@ import "react-simple-keyboard/build/css/index.css";
 function TextKeyboard(props) {
   const [keyboard, setKeyboard] = useState({
     layoutName: "default",
-    input: ""
+    input: "",
+    isKeyBoardVisible: false
   });
 
   const keyboardRef = useRef(null);
   const onChangeInput = event => {
     let input = event.target.value;
-    setKeyboard(
-      {
-        input: input
-      },
-      () => {
-        keyboardRef.current.keyboard.setInput(input);
-      }
-    );
+    setKeyboard({
+      ...keyboard,
+      input: input
+    });
+    keyboardRef.current.keyboard.setInput(input);
   };
 
   const onChange = input => {
@@ -45,19 +43,26 @@ function TextKeyboard(props) {
     });
   };
 
+  const handleFocus = () => {
+    setKeyboard({ ...keyboard, isKeyBoardVisible: true });
+  };
+
   return (
     <div>
       <input
         value={keyboard.input}
         placeholder={"Tap on the virtual keyboard to start"}
         onChange={onChangeInput}
+        onFocus={handleFocus}
       />
-      <Keyboard
-        ref={keyboardRef}
-        layoutName={keyboard.layoutName}
-        onChange={input => onChange(input)}
-        onKeyPress={button => onKeyPress(button)}
-      />
+      {keyboard.isKeyBoardVisible && (
+        <Keyboard
+          ref={keyboardRef}
+          layoutName={keyboard.layoutName}
+          onChange={input => onChange(input)}
+          onKeyPress={button => onKeyPress(button)}
+        />
+      )}
     </div>
   );
 }
